@@ -21,6 +21,12 @@ export default function AdminDashboard() {
   const [error, setError] = useState('');
   const { user, logout } = useAuth();
 
+  const [showAddAdmin, setShowAddAdmin] = useState(false);
+  const [newAdminEmail, setNewAdminEmail] = useState('');
+  const [addAdminLoading, setAddAdminLoading] = useState(false);
+  const [addAdminError, setAddAdminError] = useState('');
+  const [createdAdmin, setCreatedAdmin] = useState(null);
+
   async function fetchSubmissions() {
     setError('');
     try {
@@ -61,6 +67,34 @@ export default function AdminDashboard() {
     }
   }
 
+  function openAddAdmin() {
+    setNewAdminEmail('');
+    setAddAdminError('');
+    setCreatedAdmin(null);
+    setShowAddAdmin(true);
+  }
+
+  function closeAddAdmin() {
+    setShowAddAdmin(false);
+  }
+
+  async function handleCreateAdmin(e) {
+    e.preventDefault();
+    setAddAdminError('');
+    setAddAdminLoading(true);
+    try {
+      const res = await api.post('/auth/admin/create', { email: newAdminEmail });
+      setCreatedAdmin({
+        email: res.data.admin?.email || newAdminEmail,
+        password: res.data.generatedPassword,
+      });
+    } catch (err) {
+      setAddAdminError(err.response?.data?.message || 'Failed to create admin');
+    } finally {
+      setAddAdminLoading(false);
+    }
+  }
+
   return (
     <div className="admin-shell">
       <div className="admin-topbar">
@@ -69,6 +103,9 @@ export default function AdminDashboard() {
         </div>
         <div className="admin-user">
           <span className="email">{user?.email}</span>
+          <button className="btn btn-secondary btn-sm" onClick={openAddAdmin} style={{ background: 'transparent', color: '#fff', borderColor: 'rgba(255,255,255,0.35)' }}>
+            + Add admin
+          </button>
           <button className="btn btn-secondary btn-sm" onClick={logout} style={{ background: 'transparent', color: '#fff', borderColor: 'rgba(255,255,255,0.35)' }}>
             Log out
           </button>
@@ -213,6 +250,57 @@ export default function AdminDashboard() {
           </table>
         </div>
       </div>
+
+      {showAddAdmin && (
+        <div className="modal-overlay" onClick={closeAddAdmin}>
+          <div className="modal-card" onClick={(e) => e.stopPropagation()}>
+            {!createdAdmin ? (
+              <>
+                <h3>Add a new admin</h3>
+                <p className="sub">
+                  A random password is generated automatically and shown once below.
+                </p>
+                <form onSubmit={handleCreateAdmin}>
+                  <input
+                    className="field"
+                    type="email"
+                    placeholder="New admin's email"
+                    value={newAdminEmail}
+                    onChange={(e) => setNewAdminEmail(e.target.value)}
+                    required
+                  />
+                  {addAdminError && <p className="msg-error">{addAdminError}</p>}
+                  <div className="modal-actions">
+                    <button type="button" className="btn btn-secondary" onClick={closeAddAdmin}>
+                      Cancel
+                    </button>
+                    <button type="submit" className="btn btn-primary" disabled={addAdminLoading}>
+                      {addAdminLoading ? 'Creating…' : 'Create admin'}
+                    </button>
+                  </div>
+                </form>
+              </>
+            ) : (
+              <>
+                <h3>Admin created</h3>
+                <p className="sub">
+                  Share this password with the new admin now — it won't be shown again.
+                </p>
+                <div className="credential-box">
+                  <div><span className="cred-label">Email</span>{createdAdmin.email}</div>
+                  <div><span className="cred-label">Password</span>{createdAdmin.password}</div>
+                </div>
+                <div className="modal-actions">
+                  <button type="button" className="btn btn-primary" onClick={closeAddAdmin}>
+                    Done
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
       <Footer />
     </div>
   );
