@@ -191,8 +191,7 @@ node test-api.js
 ```
 
 Sample output:
-<img width="760" height="375" alt="passed customer" src="https://github.com/user-attachments/assets/testing.png" />
-
+![Automated test results](./frontend/src/assets/testing.png)
 
 ## Manual Testing (VS Code REST Client)
 
