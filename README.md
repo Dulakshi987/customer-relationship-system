@@ -164,9 +164,9 @@ Response includes the generated password once:
 **Submit form** — `POST /submissions` (requires customer `Authorization: Bearer <token>`)
 ```json
 {
-  "firstName": "Dulakshi",
-  "lastName": "Ekshani",
-  "email": "dulakshi@example.com",
+  "firstName": "ABC",
+  "lastName": "EFG",
+  "email": "abc@gmail.com",
   "gender": "FEMALE",
   "mobileNumber": "0771234567",
   "address": "Colombo, Sri Lanka",
