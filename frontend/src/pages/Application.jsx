@@ -5,6 +5,8 @@ import logo from '../assets/logo.png';
 import Footer from '../components/Footer';
 import '../styles/theme.css';
 
+const MOBILE_REGEX = /^0\d{9}$/;
+
 const initialForm = {
   firstName: '', lastName: '', email: '', gender: 'MALE',
   mobileNumber: '', address: '', feedback: '',
@@ -15,16 +17,37 @@ export default function Application() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
+  const [mobileError, setMobileError] = useState('');
   const { user, logout } = useAuth();
 
   function handleChange(e) {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+
+    if (name === 'mobileNumber') {
+      // Only allow digits, capped at 10 characters (e.g. 0771234567)
+      const digitsOnly = value.replace(/\D/g, '').slice(0, 10);
+      setForm({ ...form, mobileNumber: digitsOnly });
+      if (digitsOnly && !MOBILE_REGEX.test(digitsOnly)) {
+        setMobileError('Enter a valid 10-digit number starting with 0 (e.g. 0771234567)');
+      } else {
+        setMobileError('');
+      }
+      return;
+    }
+
+    setForm({ ...form, [name]: value });
   }
 
   async function handleSubmit(e) {
     e.preventDefault();
     setError('');
     setSuccess('');
+
+    if (!MOBILE_REGEX.test(form.mobileNumber)) {
+      setMobileError('Enter a valid 10-digit number starting with 0 (e.g. 0771234567)');
+      return;
+    }
+
     setLoading(true);
     try {
       await api.post('/submissions', form);
@@ -114,11 +137,16 @@ export default function Application() {
                 <input
                   className="field"
                   name="mobileNumber"
+                  type="tel"
+                  inputMode="numeric"
                   placeholder="e.g. 0771234567"
                   value={form.mobileNumber}
                   onChange={handleChange}
                   required
                 />
+                {mobileError && (
+                  <p className="msg-error" style={{ margin: '6px 0 0', fontSize: '0.8rem' }}>{mobileError}</p>
+                )}
               </div>
 
               <div className="span-2">
@@ -146,7 +174,7 @@ export default function Application() {
             </div>
 
             <div className="form-actions">
-              <button type="submit" className="btn btn-primary" disabled={loading}>
+              <button type="submit" className="btn btn-primary" disabled={loading || !!mobileError}>
                 {loading ? 'Submitting…' : 'Submit'}
               </button>
               {error && <p className="msg-error" style={{ margin: 0 }}>{error}</p>}
