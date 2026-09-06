@@ -12,7 +12,6 @@ const sequelize = require('./config/db');
 
 const authRoutes = require('./routes/authRoutes');
 const submissionRoutes = require('./routes/submissionRoutes');
-const { errorHandler, notFoundHandler } = require('./middleware/errorHandler');
 
 // Load models so Sequelize knows about them for sync/associations
 require('./models/User');
@@ -26,12 +25,6 @@ app.use('/api/auth', authRoutes);
 app.use('/api/submissions', submissionRoutes);
 
 app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
-
-// 404 handler - for unmatched routes
-app.use(notFoundHandler);
-
-// Global error handler - must be registered last
-app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 

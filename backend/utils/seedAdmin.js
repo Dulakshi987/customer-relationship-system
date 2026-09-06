@@ -1,4 +1,5 @@
-require('dotenv').config();
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
 const bcrypt = require('bcrypt');
 const sequelize = require('../config/db');
 const User = require('../models/User');
@@ -6,8 +7,10 @@ const User = require('../models/User');
 async function seed() {
   await sequelize.sync();
 
-  const email = process.env.SEED_ADMIN_EMAIL;
-  const password = process.env.SEED_ADMIN_PASSWORD;
+  const email = process.env.SEED_ADMIN_EMAIL || 'admin@gmail.com';
+  const password = process.env.SEED_ADMIN_PASSWORD || 'Admin@123';
+
+  console.log('Using admin email:', email);
 
   const existing = await User.findOne({ where: { email } });
   if (existing) {
