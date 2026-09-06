@@ -164,9 +164,9 @@ Response includes the generated password once:
 **Submit form** — `POST /submissions` (requires customer `Authorization: Bearer <token>`)
 ```json
 {
-  "firstName": "Dulakshi",
-  "lastName": "Ekshani",
-  "email": "dulakshi@example.com",
+  "firstName": "Dula",
+  "lastName": "Esha",
+  "email": "dula@example.com",
   "gender": "FEMALE",
   "mobileNumber": "0771234567",
   "address": "Colombo, Sri Lanka",
@@ -175,6 +175,17 @@ Response includes the generated password once:
 ```
 
 All endpoints return standard HTTP status codes (`200`, `201`, `400`, `401`, `403`, `404`, `409`, `500`) with a JSON `message` field describing the result.
+
+## Screenshots
+
+| Page            | Preview                                              |
+|-----------------|-------------------------------------------------------|
+| Home            | ![Home page](./frontend/src/assets/home.png)           |
+| Customer Register | ![Customer register page](<./frontend/src/assets/customer register.png>) |
+| Customer Login  | ![Customer login page](./frontend/src/assets/customerlogin.png) |
+| Admin Login     | ![Admin login page](./frontend/src/assets/adminlogin.png) |
+| Application (Form Submission) | ![Application form page](./frontend/src/assets/submission.png) |
+| Admin Dashboard | ![Admin dashboard page](./frontend/src/assets/admindashboard.png) |
 
 ## Testing
 
@@ -190,8 +201,9 @@ cd backend
 node test-api.js
 ```
 
-Sample output:
-![Automated test results](./frontend/src/assets/testing.png)
+Test output:
+
+![Automated test results](./screenshots/test-results.png)
 
 ## Manual Testing (VS Code REST Client)
 
