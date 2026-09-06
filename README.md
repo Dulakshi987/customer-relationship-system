@@ -203,8 +203,7 @@ node test-api.js
 
 Test output:
 
-![Automated test results](./screenshots/test-results.png)
-
+![Automated test results](./frontend/src/assets/testing.png)
 ## Manual Testing (VS Code REST Client)
 
 A `backend/api-tests.http` file is also included for manually testing each
