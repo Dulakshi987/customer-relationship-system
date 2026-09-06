@@ -1,11 +1,15 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
+import logo from '../assets/logo.png';
+import Footer from '../components/Footer';
+import '../styles/theme.css';
 
 export default function AdminLogin() {
   const [form, setForm] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuth();
 
@@ -16,27 +20,59 @@ export default function AdminLogin() {
   async function handleSubmit(e) {
     e.preventDefault();
     setError('');
+    setLoading(true);
     try {
       const res = await api.post('/auth/admin/login', form);
       login(res.data);
       navigate('/admin/dashboard');
     } catch (err) {
       setError(err.response?.data?.message || 'Login failed');
+    } finally {
+      setLoading(false);
     }
   }
 
   return (
-    <div style={{ maxWidth: 400, margin: '60px auto', fontFamily: 'sans-serif' }}>
-      <h2>Admin Login</h2>
-      <form onSubmit={handleSubmit}>
-        <input name="email" type="email" placeholder="Admin Email" value={form.email} onChange={handleChange} required style={inputStyle} />
-        <input name="password" type="password" placeholder="Password" value={form.password} onChange={handleChange} required style={inputStyle} />
-        {error && <p style={{ color: 'red' }}>{error}</p>}
-        <button type="submit" style={buttonStyle}>Login</button>
-      </form>
+    <div className="auth-shell">
+      <div className="auth-center">
+      <div className="auth-card">
+        <div className="auth-logo">
+          <div className="brand-badge lg">
+            <img src={logo} alt="Revotec" />
+          </div>
+        </div>
+        <h2>Admin sign in</h2>
+        <p className="sub">Restricted to admin accounts only.</p>
+
+        <form onSubmit={handleSubmit}>
+          <input
+            className="field"
+            name="email"
+            type="email"
+            placeholder="Admin email"
+            value={form.email}
+            onChange={handleChange}
+            required
+          />
+          <input
+            className="field"
+            name="password"
+            type="password"
+            placeholder="Password"
+            value={form.password}
+            onChange={handleChange}
+            required
+          />
+          {error && <p className="msg-error">{error}</p>}
+          <button type="submit" className="btn btn-primary" disabled={loading}>
+            {loading ? 'Signing in…' : 'Sign in'}
+          </button>
+        </form>
+
+        <p className="auth-foot"><Link to="/">← Back to home</Link></p>
+      </div>
+      </div>
+      <Footer />
     </div>
   );
 }
-
-const inputStyle = { display: 'block', width: '100%', marginBottom: 12, padding: 8 };
-const buttonStyle = { padding: '8px 16px' };
